@@ -9,8 +9,10 @@ run() {
   "$@" >&2 || echo "install-deps.sh: 失敗しました（続行します）: $*" >&2
 }
 
-# Node.js
-if [ -f package-lock.json ]; then
+# Node.js（node_modules が既にあれば再インストールしない）
+if [ -f package.json ] && [ -d node_modules ]; then
+  echo "install-deps.sh: node_modules が既に存在するため npm のインストールをスキップ" >&2
+elif [ -f package-lock.json ]; then
   if command -v npm >/dev/null 2>&1; then run npm ci; else echo "install-deps.sh: npm が見つからないためスキップ" >&2; fi
 elif [ -f package.json ]; then
   if command -v npm >/dev/null 2>&1; then run npm install; else echo "install-deps.sh: npm が見つからないためスキップ" >&2; fi
